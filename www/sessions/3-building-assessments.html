@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Authoring Quizzes & Assessments | MSU CS AI Workshop</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="../index.html">
+      <span class="brand-name">Montana State University</span>
+      <span class="brand-dept">Computer Science</span>
+    </a>
+    <span class="brand-title">Effective AI for Educators</span>
+  </div>
+</header>
+<main class="wrap">
+  <nav class="crumbs"><a href="../index.html">Sessions</a> / Authoring Quizzes & Assessments</nav>
+  <section class="session-head">
+    <span class="kicker">Session 3</span>
+    <h1>Authoring Quizzes & Assessments</h1>
+    <p class="lede">Quizzes, keys, and study guides from your notes</p>
+  </section>
+
+  <div class="video">
+    <iframe src="https://www.youtube.com/embed/ThDrQYSa1hs" title="Authoring Quizzes & Assessments"
+      frameborder="0" loading="lazy"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen></iframe>
+  </div>
+
+  <section id="summary" class="block">
+    <h2>Summary</h2>
+    <p class="placeholder">A timestamped summary will be added once the recording's transcript is available.</p>
+  </section>
+
+  <section id="transcript" class="block">
+    <h2>Transcript</h2>
+    <p class="placeholder">The transcript will be posted once YouTube finishes processing the recording.</p>
+  </section>
+
+  <section id="notes" class="block">
+    <h2>Notes</h2>
+    <p class="notes-meta">Rendered from the session slides.
+      <a href="../notes/3_building_assessments.pdf">Download slides (PDF)</a></p>
+    <article class="note"><h3>Assessment in the AI Era</h3>
+<ul>
+<li>Take-home work is no longer a reliable signal</li>
+<li>In-person, written-response quizzes move the signal back in the room</li>
+<li>One handwritten page of notes, no devices</li>
+</ul>
+<pre><code>  every ~3 weeks:
+    in-person quiz
+    written responses
+    1 page handwritten notes
+    no laptops, no phones
+</code></pre></article>
+<article class="note"><h3>The Quiz Pipeline</h3>
+<ul>
+<li>One prompt produces the quiz, the answer key, and the study guide</li>
+<li>Each lands as markdown, then a print-ready PDF</li>
+<li>Format rules live in CLAUDE.md</li>
+</ul>
+<pre><code>  meta/quizzes/spring-2026/quiz3/
+    3_memory_quiz.md
+    3_memory_quiz.pdf
+    3_memory_answer_key.md
+    3_memory_answer_key.pdf
+    3_memory_study_guide.md
+    3_memory_study_guide.pdf
+</code></pre></article>
+<article class="note"><h3>From Notes to Quiz</h3>
+<ul>
+<li>The agent builds questions from the lecture notes you taught</li>
+<li>Questions track the material, so prep is the study guide</li>
+<li>You edit wording and difficulty before it prints</li>
+</ul>
+<pre><code>  &gt; generate quiz 3 from the
+    memory and pointers lectures,
+    5 questions, follow the quiz
+    rules in CLAUDE.md
+</code></pre></article>
+<article class="note"><h3>Answer Keys and Rubrics</h3>
+<ul>
+<li>The key carries a grading rubric for the TA</li>
+<li>Points are fixed; partial-credit guidance is spelled out</li>
+<li>Grading stays consistent across graders</li>
+</ul>
+<pre><code class="language-markdown">### Q3: Stack vs Heap
+
+Stack: automatic, LIFO, freed on
+return. Heap: manual, malloc/free.
+
+*Grading: 10 full. 7 if lifetime
+is vague. 5 for any real effort.*
+</code></pre></article>
+<article class="note"><h3>Study Guides</h3>
+<ul>
+<li>A short list of topics, no answers given away</li>
+<li>Students get it ahead of the quiz</li>
+<li>Same source notes, different view</li>
+</ul>
+<pre><code class="language-markdown"># Quiz 3 Study Guide
+
+* Stack frames and lifetime
+* Heap allocation with malloc
+* Pointer arithmetic
+* Dangling pointers
+</code></pre></article>
+<article class="note"><h3>Print-Ready PDFs</h3>
+<ul>
+<li><code>\newpage</code> after each question leaves room to write</li>
+<li>pandoc turns the markdown into a printable PDF</li>
+<li>No styling fuss -- the questions are the point</li>
+</ul>
+<pre><code class="language-bash">  pandoc 3_memory_quiz.md \
+    -o 3_memory_quiz.pdf
+</code></pre></article>
+<article class="note"><h3>The Lecture Review Loop</h3>
+<ul>
+<li>After lecture, download the recording transcript</li>
+<li><code>/review-lecture</code> compares the transcript to the slides</li>
+<li>Output: timing, coverage gaps, and proposed slide fixes</li>
+</ul>
+<pre><code>  deliver  -&gt; transcript
+  transcript + slides
+           -&gt; /review-lecture
+           -&gt; gaps + fixes
+           -&gt; revise slides
+</code></pre></article>
+<article class="note"><h3>Generating Assignments</h3>
+<ul>
+<li>Draft assignment specs and starter code from a description</li>
+<li>The agent can build a sample system you stub out for students</li>
+<li>You own the spec; it handles the boilerplate</li>
+</ul>
+<pre><code>  &gt; write an assignment spec for
+    a malloc implementation, plus
+    a test skeleton students fill
+    in
+</code></pre></article>
+<article class="note"><h3>DEMO: Notes to Quiz</h3>
+<ul>
+<li>Generate a quiz and answer key from one lecture's notes</li>
+<li>Show the rubric the TA will grade against</li>
+<li>Render the PDF and show the per-question page breaks</li>
+</ul></article>
+<article class="note"><h3>Summary</h3>
+<ul>
+<li>Take-home work is a weak signal; in-person written quizzes are stronger</li>
+<li>One prompt yields the quiz, the answer key, and the study guide</li>
+<li>Questions are built from the notes you actually taught</li>
+<li>Answer keys carry a rubric so grading stays consistent</li>
+<li>Study guides hint at topics without giving away answers</li>
+<li><code>\newpage</code> and pandoc produce print-ready quizzes</li>
+<li><code>/review-lecture</code> checks the recording against your slides</li>
+<li>The agent can draft assignment specs and starter code</li>
+</ul></article>
+  </section>
+
+</main>
+<footer class="site">
+  <div class="wrap">
+    <p>Montana State University &middot; Gianforte School of Computing</p>
+    <p>Workshop materials by Carson Gross. Recordings hosted on YouTube.</p>
+  </div>
+</footer>
+</body>
+</html>

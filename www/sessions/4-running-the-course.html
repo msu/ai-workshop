@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Using AI to Run Your Course | MSU CS AI Workshop</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="../index.html">
+      <span class="brand-name">Montana State University</span>
+      <span class="brand-dept">Computer Science</span>
+    </a>
+    <span class="brand-title">Effective AI for Educators</span>
+  </div>
+</header>
+<main class="wrap">
+  <nav class="crumbs"><a href="../index.html">Sessions</a> / Using AI to Run Your Course</nav>
+  <section class="session-head">
+    <span class="kicker">Session 4</span>
+    <h1>Using AI to Run Your Course</h1>
+    <p class="lede">Automation, grading, and tooling</p>
+  </section>
+
+  <div class="video">
+    <iframe src="https://www.youtube.com/embed/sy7_FeHPPRo" title="Using AI to Run Your Course"
+      frameborder="0" loading="lazy"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen></iframe>
+  </div>
+
+  <section id="summary" class="block">
+    <h2>Summary</h2>
+    <p class="placeholder">A timestamped summary will be added once the recording's transcript is available.</p>
+  </section>
+
+  <section id="transcript" class="block">
+    <h2>Transcript</h2>
+    <p class="placeholder">The transcript will be posted once YouTube finishes processing the recording.</p>
+  </section>
+
+  <section id="notes" class="block">
+    <h2>Notes</h2>
+    <p class="notes-meta">Rendered from the session slides.
+      <a href="../notes/4_running_the_course.pdf">Download slides (PDF)</a></p>
+    <article class="note"><h3>Routine Automation</h3>
+<ul>
+<li>The repetitive course tasks are scripts behind one runner</li>
+<li><code>just</code> lists them; you run them by name</li>
+<li>The agent wrote most of these scripts in the first place</li>
+</ul>
+<pre><code class="language-bash">  $ just --list
+  gen-pdfs       lecture PDFs
+  gen-notes      podium notes
+  ss             schedule stream
+  get-transcripts
+  gen-profiles   roster from Canvas
+  autograde      run tests locally
+</code></pre></article>
+<article class="note"><h3>Scripts Behind just</h3>
+<ul>
+<li>Python scripts, each with one job</li>
+<li>Path-independent, so they run from anywhere in the repo</li>
+<li>Add a script, add a recipe, and it joins the menu</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Script</th>
+<th>Job</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>generate_pdfs</code></td>
+<td>slides to PDF</td>
+</tr>
+<tr>
+<td><code>get_transcripts</code></td>
+<td>pull YouTube</td>
+</tr>
+<tr>
+<td><code>schedule_stream</code></td>
+<td>book a stream</td>
+</tr>
+<tr>
+<td><code>gen_profiles</code></td>
+<td>roster CSV</td>
+</tr>
+<tr>
+<td><code>autograder</code></td>
+<td>grade repos</td>
+</tr>
+</tbody>
+</table></article>
+<article class="note"><h3>The Autograder</h3>
+<ul>
+<li>Runs the test suite on every student push</li>
+<li>Publishes results as a GitHub release</li>
+<li>Feedback is automatic, so homework can be for learning</li>
+</ul>
+<pre><code class="language-yaml">  on: [push]
+  jobs:
+    grade:
+      run: python autograder.py run -l
+      # results.md -&gt; release
+</code></pre></article>
+<article class="note"><h3>Homework as Learning</h3>
+<ul>
+<li>If the grade is not the point, the work can be</li>
+<li>Students get instant feedback and keep going</li>
+<li>You have to write the code to learn to read it</li>
+</ul>
+<pre><code>  push -&gt; tests run -&gt; feedback
+       -&gt; fix -&gt; push again
+
+  the loop is the lesson
+</code></pre></article>
+<article class="note"><h3>Tools and Visualizers</h3>
+<ul>
+<li>The agent builds the small tools the course needs</li>
+<li>Canvas helper for bulk grade entry</li>
+<li>MTMC, BDP, and bytecode visualizers for the lectures</li>
+</ul>
+<pre><code>  canvas-helper   bulk grades
+  mtmc-web        CPU emulator
+  bdp-1           8-bit model
+  bytecode-viz    step through
+</code></pre></article>
+<article class="note"><h3>main vs student Branches</h3>
+<ul>
+<li><code>main</code> holds working implementations -- the tests pass</li>
+<li><code>student</code> ships stubs marked <code>// TODO - implement</code></li>
+<li>Students fill in the code and make the tests pass</li>
+</ul>
+<pre><code>  main      student
+  ----      -------
+  full      // TODO - implement
+  impl      describe the result,
+  tests     not the steps
+  pass      tests fail (on purpose)
+</code></pre></article>
+<article class="note"><h3>Keeping Branches in Sync</h3>
+<ul>
+<li>Merge <code>main</code> into <code>student</code>, then strip implementations</li>
+<li>Delete do-not-ship content: keys, notes, solutions</li>
+<li>The agent does the mechanical strip; you verify nothing leaked</li>
+</ul>
+<pre><code>  1. merge main -&gt; student
+  2. stub implementations
+  3. drop keys + notes
+  4. grep for leaked solutions
+  5. tests compile, still fail
+</code></pre></article>
+<article class="note"><h3>AI as TA, Not Answer Key</h3>
+<ul>
+<li>Students get an AGENTS.md that frames the agent as a tutor</li>
+<li>It explains and unblocks; it does not hand over solutions</li>
+<li>The temptation is real -- the structure pushes against it</li>
+</ul>
+<pre><code class="language-markdown"># AGENTS.md
+
+* You are a teaching assistant
+* Explain concepts, do not write
+  the student's solution
+* Code examples: 2-5 lines max
+</code></pre></article>
+<article class="note"><h3>DEMO: just in Action</h3>
+<ul>
+<li>Show the full recipe menu with <code>just --list</code></li>
+<li>Run PDF generation end to end</li>
+<li>Point out that one command wraps a whole script</li>
+</ul></article>
+<article class="note"><h3>Summary</h3>
+<ul>
+<li>Repetitive course tasks are scripts behind <code>just</code> recipes</li>
+<li>The agent wrote most of those scripts to begin with</li>
+<li>The autograder runs tests on every push and publishes results</li>
+<li>Automatic feedback lets homework be for learning, not just grading</li>
+<li>The agent builds the course's tools and visualizers</li>
+<li><code>main</code> carries implementations; <code>student</code> ships stubs</li>
+<li>Syncing merges main, strips solutions, and verifies no leaks</li>
+<li>AGENTS.md frames the agent as a tutor, not an answer key</li>
+</ul></article>
+  </section>
+
+</main>
+<footer class="site">
+  <div class="wrap">
+    <p>Montana State University &middot; Gianforte School of Computing</p>
+    <p>Workshop materials by Carson Gross. Recordings hosted on YouTube.</p>
+  </div>
+</footer>
+</body>
+</html>

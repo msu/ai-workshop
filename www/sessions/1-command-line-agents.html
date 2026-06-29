@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Command-Line Agents | MSU CS AI Workshop</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="../index.html">
+      <span class="brand-name">Montana State University</span>
+      <span class="brand-dept">Computer Science</span>
+    </a>
+    <span class="brand-title">Effective AI for Educators</span>
+  </div>
+</header>
+<main class="wrap">
+  <nav class="crumbs"><a href="../index.html">Sessions</a> / Command-Line Agents</nav>
+  <section class="session-head">
+    <span class="kicker">Session 1</span>
+    <h1>Command-Line Agents</h1>
+    <p class="lede">Moving past the chat window</p>
+  </section>
+
+  <div class="video">
+    <iframe src="https://www.youtube.com/embed/gOUW4jmGJVY" title="Command-Line Agents"
+      frameborder="0" loading="lazy"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen></iframe>
+  </div>
+
+  <section id="summary" class="block">
+    <h2>Summary</h2>
+    <p class="placeholder">A timestamped summary will be added once the recording's transcript is available.</p>
+  </section>
+
+  <section id="transcript" class="block">
+    <h2>Transcript</h2>
+    <p class="placeholder">The transcript will be posted once YouTube finishes processing the recording.</p>
+  </section>
+
+  <section id="notes" class="block">
+    <h2>Notes</h2>
+    <p class="notes-meta">Rendered from the session slides.
+      <a href="../notes/1_command_line_agents.pdf">Download slides (PDF)</a></p>
+    <article class="note"><h3>What's a Coding Agent?</h3>
+<ul>
+<li>Coding agents are local programs that read your files</li>
+<li>Can run commands directly</li>
+<li>Can make edits in place</li>
+</ul>
+<pre><code class="language-bash">&gt; fix the typo on slide 4
+
+  Read   20_compilers.md
+  Edit   20_compilers.md
+   -  * a compilier turns source
+   +  * a compiler turns source
+
+  Done. One line changed.
+</code></pre></article>
+<article class="note"><h3>What's a Coding Agent?</h3>
+<ul>
+<li>Coding agents work in a loop, not a single reply</li>
+<li>Working with a coding agent is typically conversation-like</li>
+<li>Rewards good writing skills!</li>
+</ul>
+<pre><code class="language-bash">&gt; add a slide on linkers after slide 6
+
+  Read   20_compilers.md
+  Edit   20_compilers.md (+14)
+
+&gt; too long, cut it to three bullets
+
+  Edit   20_compilers.md (-6)
+
+&gt; good, now add a code example
+
+  Edit   20_compilers.md (+8)
+</code></pre></article>
+<article class="note"><h3>Online Chat vs Terminal</h3>
+<ul>
+<li>Many people are used to using AI agents online, via Chat</li>
+<li>Chat sees only what you paste in</li>
+<li>Chat hands back text</li>
+</ul>
+<pre><code>  Chat window          Coding agent
+  -----------          ------------
+  paste a file    -&gt;   reads any file
+  copy reply back -&gt;   edits in place
+  no memory       -&gt;   project rules
+  no commands     -&gt;   runs the build
+</code></pre></article>
+<article class="note"><h3>Online vs Terminal</h3>
+<ul>
+<li>Command line agents see the whole repo</li>
+<li>Command line agents hand back a diff you can review</li>
+<li>Command line agents run commands locally -- powerful and dangerous</li>
+</ul>
+<pre><code>  &gt; what does this project do?
+
+  read  CLAUDE.md
+  read  meta/lectures/ (36 files)
+  bash  git log --oneline -5
+
+  &quot;A systems course built around
+   two teaching CPUs...&quot;
+</code></pre></article>
+<article class="note"><h3>Claude Code</h3>
+<ul>
+<li>In today's presentation I am going to use Claude Code</li>
+<li>There are many command line agents, I am used to Claude</li>
+<li>The same concepts should work with any command line agent</li>
+</ul>
+<pre><code class="language-bash">  $ claude
+
+  * Welcome to Claude Code
+
+    cwd: ~/csci-366-template
+    model: claude-opus-4-8
+
+  &gt; _
+</code></pre></article>
+<article class="note"><h3>Installing</h3>
+<ul>
+<li>Install once with <code>npm</code>, then run <code>claude</code> in any project</li>
+<li>Sign in with your Anthropic account on first launch</li>
+<li>Verify the exact command at the current Claude Code docs</li>
+</ul>
+<pre><code class="language-bash">  npm install -g @anthropic-ai/claude-code
+
+  cd your-project
+  claude
+</code></pre></article>
+<article class="note"><h3>CLAUDE.md</h3>
+<ul>
+<li>A markdown file the agent reads on every run</li>
+<li>Holds project rules: style, conventions, what not to touch</li>
+<li>Encode your taste once, reuse it on every task</li>
+</ul>
+<pre><code class="language-markdown"># Lectures
+
+* Use a two-cols layout
+* Titles short, no &quot;Best Practices&quot;
+* Max three bullets per slide
+* Italics for emphasis, not bold
+* Asterisk bullets, no numbered lists
+</code></pre></article>
+<article class="note"><h3>Permissions</h3>
+<ul>
+<li>The agent asks before it edits or runs commands</li>
+<li>You allowlist the safe, repetitive calls</li>
+<li>Nothing lands without your say-so</li>
+</ul>
+<pre><code>  Edit  meta/lectures/37_ai.md   [y/n]
+  Bash  just gen-pdfs            [y/n]
+  Bash  rm -rf meta/             [n]
+</code></pre></article>
+<article class="note"><h3>Permission Modes</h3>
+<ul>
+<li><em>Default</em> -- ask before each edit and command</li>
+<li><em>Accept edits</em> -- apply edits automatically, still ask for commands</li>
+<li><em>Plan</em> is read-only; <em>bypass</em> skips every prompt -- use with care</li>
+</ul>
+<pre><code>  shift+tab cycles the mode:
+
+  default       ask every time
+  accept edits  auto-apply edits
+  plan          read-only, no edits
+  bypass        no prompts (risky)
+</code></pre></article>
+<article class="note"><h3>Selecting a Model</h3>
+<ul>
+<li>Bigger models reason better; smaller ones are faster and cheaper</li>
+<li>Switch any time with <code>/model</code></li>
+<li>Match the model to the task -- drafting vs a quick rename</li>
+</ul>
+<pre><code>  &gt; /model
+
+    opus 4.8    most capable
+    sonnet 4.6  balanced
+    haiku 4.5   fast, cheap
+</code></pre></article>
+<article class="note"><h3>Context</h3>
+<ul>
+<li>Context is everything the agent currently sees</li>
+<li>Your prompts, the files it read, and command output all go in</li>
+<li>It is a fixed window -- it fills as the session runs</li>
+</ul>
+<pre><code>  in the context window:
+
+  CLAUDE.md (always)
+  files you @-mention
+  command output
+  the whole conversation
+</code></pre></article>
+<article class="note"><h3>Managing Context</h3>
+<ul>
+<li>A full window is slower and less accurate</li>
+<li><code>/clear</code> resets to a blank slate -- use it between unrelated tasks</li>
+<li><code>/compact</code> summarizes the session so far, freeing room to keep going</li>
+</ul>
+<pre><code>  &gt; /clear
+    fresh start, nothing carried
+
+  &gt; /compact
+    summarize, keep the gist,
+    drop the raw history
+</code></pre></article>
+<article class="note"><h3>Skills</h3>
+<ul>
+<li>A skill is a markdown file: a reusable prompt plus steps</li>
+<li>Lives in <code>.claude/commands/</code>, per user or per project</li>
+<li>Invoke it with a slash; <code>$ARGUMENTS</code> passes input</li>
+</ul>
+<pre><code>  ~/.claude/commands/
+    review-lecture.md
+    pick-session.md
+
+  .claude/commands/   (per project)
+</code></pre></article>
+<article class="note"><h3>Skill Example: /review-lecture</h3>
+<ul>
+<li><code>/review-lecture &lt;url&gt;</code> grades a recording against its slides</li>
+<li>Pulls the transcript, matches it to the lecture, writes a review</li>
+<li>Output: timing, coverage gaps, and proposed slide fixes</li>
+</ul>
+<pre><code class="language-markdown"># Review Lecture
+
+## Steps
+1. Fetch the transcript
+2. Match it to the slide deck
+3. Read both files
+4. Write the review:
+   timing, gaps, fixes
+</code></pre></article>
+<article class="note"><h3>IntelliJ Integration</h3>
+<ul>
+<li>Claude Code runs inside the IDE, not just a separate terminal</li>
+<li>Edits land where you expect: the editor, diffs, the gutter</li>
+<li>Similar plugins exist for VS Code and many other editors</li>
+</ul>
+<pre><code>  IntelliJ + Claude Code plugin
+
+  * chat panel beside your code
+  * agent edits show as diffs
+  * selection becomes context
+</code></pre></article>
+<article class="note"><h3>Using AI Effectively</h3>
+<ul>
+<li>Code is cheap to generate - understanding is expensive</li>
+<li>Work in small steps, not giant changelists no one can read</li>
+</ul>
+<pre><code>  generate -&gt; read -&gt; accept
+  generate -&gt; read -&gt; reject
+  generate -&gt; read -&gt; revise
+
+  never:
+  generate -&gt; commit -&gt; hope
+</code></pre></article>
+<article class="note"><h3>Review Diffs!</h3>
+<ul>
+<li>The agent is fast and confident, including when it is wrong</li>
+<li>A diff is the unit of trust -- read it before you accept</li>
+<li><code>git</code> is the safety net: nothing is permanent until you commit</li>
+</ul>
+<pre><code class="language-diff">  ## C's Design Principles
+
+- * Trust the programmer
++ * _Trust the programmer_ -- low-level access
+  * One-to-one with assembly where possible
++ * No runtime safety net
+</code></pre></article>
+<article class="note"><h3>DEMO: Explain Project</h3>
+<ul>
+<li>Open the course repo and ask the agent what the project is</li>
+<li>It reads CLAUDE.md and the tree, then answers</li>
+<li>Shows the loop, the file access, and the project rules in one shot</li>
+</ul></article>
+<article class="note"><h3>Summary</h3>
+<ul>
+<li>A coding agent reads files, runs commands, and edits in a loop</li>
+<li>The terminal beats chat: full repo context and reviewable diffs</li>
+<li>CLAUDE.md encodes your rules so output matches your style</li>
+<li>Permissions keep you in control of edits and commands</li>
+<li>Skills wrap multi-step workflows behind a slash command</li>
+<li>Code is cheap; understanding is the bottleneck</li>
+<li>Work incrementally and read every diff before accepting</li>
+<li>git is the undo button -- nothing lands until you commit</li>
+</ul></article>
+  </section>
+
+</main>
+<footer class="site">
+  <div class="wrap">
+    <p>Montana State University &middot; Gianforte School of Computing</p>
+    <p>Workshop materials by Carson Gross. Recordings hosted on YouTube.</p>
+  </div>
+</footer>
+</body>
+</html>

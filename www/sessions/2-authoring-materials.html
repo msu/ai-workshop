@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Authoring AI-Friendly Materials | MSU CS AI Workshop</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="../index.html">
+      <span class="brand-name">Montana State University</span>
+      <span class="brand-dept">Computer Science</span>
+    </a>
+    <span class="brand-title">Effective AI for Educators</span>
+  </div>
+</header>
+<main class="wrap">
+  <nav class="crumbs"><a href="../index.html">Sessions</a> / Authoring AI-Friendly Materials</nav>
+  <section class="session-head">
+    <span class="kicker">Session 2</span>
+    <h1>Authoring AI-Friendly Materials</h1>
+    <p class="lede">Course materials as plain-text markdown</p>
+  </section>
+
+  <div class="video">
+    <iframe src="https://www.youtube.com/embed/5i7lhEwNf_Q" title="Authoring AI-Friendly Materials"
+      frameborder="0" loading="lazy"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen></iframe>
+  </div>
+
+  <section id="summary" class="block">
+    <h2>Summary</h2>
+    <p class="placeholder">A timestamped summary will be added once the recording's transcript is available.</p>
+  </section>
+
+  <section id="transcript" class="block">
+    <h2>Transcript</h2>
+    <p class="placeholder">The transcript will be posted once YouTube finishes processing the recording.</p>
+  </section>
+
+  <section id="notes" class="block">
+    <h2>Notes</h2>
+    <p class="notes-meta">Rendered from the session slides.
+      <a href="../notes/2_authoring_materials.pdf">Download slides (PDF)</a></p>
+    <article class="note"><h3>Agents Love Plain Text</h3>
+<ul>
+<li>Lectures, quizzes, and notes are all markdown in the repo</li>
+<li>Plain text diffs, versions, and edits cleanly</li>
+<li>The agents can read it directly: no copy-paste, no export</li>
+</ul>
+<pre><code>  meta/lectures/
+    01_introduction.md
+    02_transistors.md
+    ...
+    36_final_review.md
+  meta/quizzes/
+  meta/lectures/notes/
+</code></pre></article>
+<article class="note"><h3>Why Agents Love Plain Text</h3>
+<ul>
+<li>No binary format to parse or round-trip</li>
+<li>Every change is a readable line-level diff</li>
+<li>The same file feeds the slides, the PDF, and the agent</li>
+</ul>
+<pre><code>  .md  -&gt; slidev   -&gt; slides
+  .md  -&gt; pandoc   -&gt; PDF
+  .md  -&gt; agent    -&gt; edits
+</code></pre></article>
+<article class="note"><h3>Slides Are Markdown</h3>
+<ul>
+<li>Slidev turns markdown into a slide deck</li>
+<li>https://sli.dev/</li>
+<li>One file per lecture, one slide per <code>---</code></li>
+<li>My preferred format: concepts on the left, code or diagram on the right</li>
+</ul>
+<pre><code class="language-markdown">## Dennis Ritchie's Insight
+
+* Ritchie designed C as portable assembly
+* Enough abstraction to leave one machine
+* Little enough to still see the hardware
+
+
+![book](./public/366/c_book.png)
+</code></pre></article>
+<article class="note"><h3>Diagrams, Not Just Bullets</h3>
+<ul>
+<li>Favor a diagram or code sample over a wall of text</li>
+<li>Slidev renders <code>mermaid</code> blocks and relative images inline</li>
+<li>Ask the agent to draw it, then refine the result</li>
+</ul>
+<pre><code class="language-markdown">```mermaid
+graph LR
+  src[source.c] --&gt; cc[compiler]
+  cc  --&gt; obj[object]
+  obj --&gt; ld[linker]
+  ld  --&gt; bin[binary]
+```
+</code></pre></article>
+<article class="note"><h3>Mermaid Diagrams</h3>
+<ul>
+<li>Describe the diagram in text; mermaid lays it out for you</li>
+<li>Many types: <code>flowchart</code>, <code>sequenceDiagram</code>, <code>stateDiagram</code>, <code>classDiagram</code></li>
+<li>Edit the source and the picture re-renders -- no drawing tool</li>
+</ul>
+<pre><code class="language-mermaid">stateDiagram-v2
+  state if_state &lt;&lt;choice&gt;&gt;
+  [*] --&gt; IsPositive
+  IsPositive --&gt; if_state
+  if_state --&gt; False: if n &lt; 0
+  if_state --&gt; True : if n &gt;= 0
+</code></pre></article>
+<article class="note"><h3>Consistent Style</h3>
+<ul>
+<li>The slide rules live in CLAUDE.md, not in your head each time</li>
+<li>The agent applies them to every deck it touches</li>
+<li>Change the rule once and regenerate</li>
+</ul>
+<pre><code class="language-markdown">* Concepts left, code/media right
+* Max three bullets per slide
+* No filler slides (no &quot;Pitfalls&quot;)
+* Cover slide first, summary slide last
+* Relative image paths: ./public/...
+</code></pre></article>
+<article class="note"><h3>Generating a Deck</h3>
+<ul>
+<li>Give a topic and an outline, get a first-draft deck</li>
+<li>It follows your layout, bullet limits, and frontmatter</li>
+<li>First draft is a starting point, not the final cut</li>
+</ul>
+<pre><code>  &gt; draft a lecture on linkers,
+    follow the lecture rules in
+    CLAUDE.md, 12 slides
+
+  -&gt; 20_linkers.md
+     cover + 10 + summary + end
+</code></pre></article>
+<article class="note"><h3>From Source to Slides</h3>
+<ul>
+<li>Hand the agent a reading, a transcript, or rough notes</li>
+<li>Get a first-draft deck in your format</li>
+<li>You still own the cut -- it drafts, you decide</li>
+</ul>
+<pre><code>  &gt; turn meta/notes/heap.md into
+    a lecture, follow the rules
+    in CLAUDE.md, ~12 slides
+</code></pre></article>
+<article class="note"><h3>Converting Old Decks</h3>
+<ul>
+<li>Migrated Google Slides into slidev with the agent</li>
+<li>Download the deck as a PDF, agent extracts text and images</li>
+<li>Faster than rebuilding, and it lands in your format</li>
+</ul>
+<pre><code>  &gt; extract the text and images
+    from old_lecture.pdf into a
+    slidev deck, follow CLAUDE.md
+
+  Read   old_lecture.pdf
+  Write  14_mtmc_overview.md
+  Write  public/366/diagram_3.png
+</code></pre></article>
+<article class="note"><h3>Revising Slides</h3>
+<ul>
+<li>Point at a slide and say what is wrong</li>
+<li>The agent edits that slide, leaves the rest alone</li>
+<li>Small, targeted edits stay reviewable</li>
+</ul>
+<pre><code>  &gt; slide 4 has five bullets,
+    cut it to three and move the
+    code example to the right
+
+  &gt; tighten the summary to
+    eight bullets
+</code></pre></article>
+<article class="note"><h3>Edit Across Every Lecture</h3>
+<ul>
+<li>One instruction can touch all 36 decks at once</li>
+<li>Useful for sweeping style or naming changes</li>
+<li>Review the diff per file before you accept</li>
+</ul>
+<pre><code>  &gt; every lecture missing a
+    summary slide: add one,
+    default layout, eight bullets
+
+  Edit  03_binary_computing.md
+  Edit  07_adder_help.md
+  ... 9 files changed
+</code></pre></article>
+<article class="note"><h3>Curriculum Gap Analysis</h3>
+<ul>
+<li>Hand the agent your lectures and a peer syllabus</li>
+<li>Ask what topics you cover that they do not, and the reverse</li>
+<li>Output is a list to judge, not a mandate to follow</li>
+</ul>
+<pre><code>  &gt; compare meta/lectures to this
+    syllabus, list topics we are
+    missing and topics we cover
+    that they skip
+</code></pre></article>
+<article class="note"><h3>Check the Facts</h3>
+<ul>
+<li>The agent writes confident prose, right or wrong</li>
+<li>Verify dates, names, and technical claims yourself</li>
+<li>A clean-looking slide is not a correct slide</li>
+</ul>
+<pre><code>  generated:
+  &quot;C was released in 1970&quot;
+
+  actual: 1972
+
+  trust nothing you did not check
+</code></pre></article>
+<article class="note"><h3>Export to PDF</h3>
+<ul>
+<li><code>just gen-pdfs</code> renders every deck to PDF</li>
+<li>Slidev can export a single deck for handouts</li>
+<li>Same markdown source -- no second format to maintain</li>
+</ul>
+<pre><code class="language-bash">  just gen-pdfs
+
+  # or one deck:
+  npx @slidev/cli export \
+    20_compilers.md
+</code></pre></article>
+<article class="note"><h3>DEMO: Topic to Deck</h3>
+<ul>
+<li>Generate a short deck from a single-line topic</li>
+<li>Show that it honors the CLAUDE.md rules without restating them</li>
+<li>Fix two slides live and watch the diff</li>
+</ul></article>
+<article class="note"><h3>Summary</h3>
+<ul>
+<li>Course materials are markdown in the repo, not binary files</li>
+<li>The same file feeds slidev, pandoc, and the agent</li>
+<li>CLAUDE.md holds the style rules so output stays consistent</li>
+<li>Generated decks are first drafts you revise, not final cuts</li>
+<li>Favor diagrams and code over walls of bullets</li>
+<li>One instruction can edit every lecture at once</li>
+<li>Compare your curriculum to a peer syllabus to find gaps</li>
+<li>Verify the agent's facts -- a clean slide can still be wrong</li>
+</ul></article>
+  </section>
+
+</main>
+<footer class="site">
+  <div class="wrap">
+    <p>Montana State University &middot; Gianforte School of Computing</p>
+    <p>Workshop materials by Carson Gross. Recordings hosted on YouTube.</p>
+  </div>
+</footer>
+</body>
+</html>
