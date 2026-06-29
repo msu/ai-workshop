@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Build the AI workshop GitHub Pages site.
 
-Output: ./www  (plain static HTML, no Jekyll build needed)
+Output: repo root  (plain static HTML, no Jekyll build needed)
+Generated paths: index.html, .nojekyll, assets/, sessions/, notes/
 
 Content sources:
   - slides:   ./slides/<base>.md          (rendered into readable notes)
@@ -23,7 +24,12 @@ import markdown
 HERE = Path(__file__).resolve().parent
 SLIDES = HERE / "slides"
 CONTENT = HERE / "content"
-WWW = HERE / "www"
+WWW = HERE  # site is served from the repo root (GitHub Pages standard)
+
+# Paths produced by the build; only these are removed on a clean rebuild so
+# sources (build.py, slides/, content/) at the root are never touched.
+GENERATED_DIRS = ("assets", "sessions", "notes")
+GENERATED_FILES = ("index.html", ".nojekyll")
 
 SESSIONS = [
     dict(num=1, slug="command-line-agents",
@@ -318,8 +324,12 @@ footer.site p{margin:.15rem 0}
 
 
 def main():
-    if WWW.exists():
-        shutil.rmtree(WWW)
+    for d in GENERATED_DIRS:
+        if (WWW / d).exists():
+            shutil.rmtree(WWW / d)
+    for f in GENERATED_FILES:
+        if (WWW / f).exists():
+            (WWW / f).unlink()
     (WWW / "assets").mkdir(parents=True)
     (WWW / "sessions").mkdir()
     (WWW / "notes").mkdir()
@@ -337,6 +347,7 @@ def main():
 
     build_index()
     print(f"Built site at {WWW}")
+
 
 
 if __name__ == "__main__":

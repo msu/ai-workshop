@@ -5,14 +5,16 @@ embedded videos, slide-derived notes, transcripts, and per-video summaries.
 
 ## Layout
 
-* `build.py` -- generator; produces `www/` from `slides/` + `content/`
+* `build.py` -- generator; produces the site at the repo root from `slides/` + `content/`
 * `slides/` -- source slide decks (`<base>.md`) and `slides/pdfs/<base>.pdf`
 * `content/summaries/<num>.md` -- per-session summary (optional)
 * `content/transcripts/<num>.md` -- per-session transcript (optional)
 * `content/topics/<num>.md` -- index-page "topics covered" list (optional)
-* `www/` -- generated output. Do NOT hand-edit; it is wiped on every build.
+* generated output at root: `index.html`, `.nojekyll`, `assets/`, `sessions/`,
+  `notes/` -- do NOT hand-edit; these are wiped/regenerated on every build.
 
-Edit `slides/` or `content/`, then re-run the build. Never edit `www/` directly.
+Edit `slides/` or `content/`, then re-run the build. Never edit the generated
+files directly. GitHub Pages serves from the repo root (branch `main`, `/`).
 
 ## Sessions
 
@@ -74,7 +76,7 @@ for seg in api.fetch("gOUW4jmGJVY"):   # seg.text, seg.start (seconds), seg.dura
 
 ```bash
 uv run --project ../templates/csci-366-template/meta/scripts python build.py
-grep -rl "coming soon\|will be added\|will be posted" www/   # should be empty when complete
+grep -rl "coming soon\|will be added\|will be posted" index.html sessions/   # should be empty when complete
 ```
 
 ## Conventions
