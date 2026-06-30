@@ -62,6 +62,26 @@ def render_md(text):
     return MD.convert(text)
 
 
+def fmt_ts(secs):
+    secs = int(secs)
+    h, m, s = secs // 3600, (secs % 3600) // 60, secs % 60
+    return f"{h}:{m:02d}:{s:02d}" if h else f"{m}:{s:02d}"
+
+
+def linkify_topics(html, s):
+    """Point rendered topic links at the internal session page (with ?t=) and
+    append the timestamp to the link text."""
+    href = f"sessions/{s['num']}-{s['slug']}.html"
+    pat = r'<a href="https://youtu\.be/[\w-]+\?t=(\d+)">(.*?)</a>'
+
+    def repl(m):
+        secs, label = m.group(1), m.group(2)
+        return (f'<a href="{href}?t={secs}">{label} '
+                f'<span class="ts">{fmt_ts(secs)}</span></a>')
+
+    return re.sub(pat, repl, html)
+
+
 def parse_slides(md_text):
     """Return [{title, html}] for content slides (skips cover/end title slides)."""
     blocks, cur = [], []
@@ -163,25 +183,34 @@ def build_index():
         thumb = f"https://img.youtube.com/vi/{s['video']}/hqdefault.jpg"
         href = f"sessions/{s['num']}-{s['slug']}.html"
         topics = optional(CONTENT / "topics" / f"{s['num']}.md", PLACEHOLDER_TOPICS)
+        topics = topics.replace("<ul>", '<ul class="topics">', 1)
+        topics = linkify_topics(topics, s)
         rows.append(f"""    <article class="row">
       <a class="thumb" href="{href}">
         <img src="{thumb}" alt="" loading="lazy">
         <span class="num">{s['num']}</span>
       </a>
       <div class="row-body">
-        <h3><a href="{href}">{s['title']}</a></h3>
+        <h3><a href="{href}">Session {s['num']}: {s['title']}</a></h3>
         <p class="sub">{s['subtitle']}</p>
         <p class="topics-label">Topics covered</p>
         {topics}
       </div>
     </article>""")
+    tldr_path = CONTENT / "tldr.md"
+    tldr = ""
+    if tldr_path.exists():
+        tldr = (f'  <details class="tldr">\n'
+                f'    <summary>TL;DR &mdash; the highest-impact, labor-saving tricks</summary>\n'
+                f'    <div class="tldr-body">\n{render_md(tldr_path.read_text())}\n    </div>\n'
+                f'  </details>\n')
     body = f"""  <section class="hero">
     <h1>Effective AI for Educators</h1>
     <p class="lede">A hands-on workshop on using command-line AI coding agents to
     author course materials, build assessments, and run a course. Recordings,
     notes, and transcripts for each session are collected below.</p>
   </section>
-  <section class="list">
+{tldr}  <section class="list">
 {chr(10).join(rows)}
   </section>
 """
@@ -200,6 +229,17 @@ def build_session(s):
     transcript = optional(CONTENT / "transcripts" / f"{s['num']}.md", PLACEHOLDER_TRANSCRIPT)
 
     pdf_rel = f"../notes/{s['base']}.pdf"
+    seek_js = (
+        "<script>\n"
+        "(function(){\n"
+        "  var t=parseInt(new URLSearchParams(location.search).get('t'),10);\n"
+        "  if(isNaN(t))return;\n"
+        "  var f=document.getElementById('player');\n"
+        "  f.src='https://www.youtube.com/embed/VIDEO?start='+t+'&autoplay=1';\n"
+        "  var v=f.closest('.video'); if(v)v.scrollIntoView();\n"
+        "})();\n"
+        "</script>"
+    ).replace("VIDEO", s["video"])
     body = f"""  <nav class="crumbs"><a href="../index.html">Sessions</a> / {s['title']}</nav>
   <section class="session-head">
     <span class="kicker">Session {s['num']}</span>
@@ -208,11 +248,12 @@ def build_session(s):
   </section>
 
   <div class="video">
-    <iframe src="https://www.youtube.com/embed/{s['video']}" title="{s['title']}"
+    <iframe id="player" src="https://www.youtube.com/embed/{s['video']}" title="{s['title']}"
       frameborder="0" loading="lazy"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen></iframe>
   </div>
+  {seek_js}
 
   <section id="summary" class="block">
     <h2>Summary</h2>
@@ -261,6 +302,17 @@ main.wrap{padding:2.5rem 0 3.5rem}
 .hero h1{font-size:2.1rem;margin:0 0 .5rem;color:var(--blue)}
 .lede{color:var(--muted);font-size:1.05rem;max-width:60ch}
 
+.tldr{margin-top:1.75rem;border:1px solid var(--line);border-left:4px solid var(--gold);
+  border-radius:8px;background:var(--panel);padding:.75rem 1.1rem}
+.tldr>summary{cursor:pointer;font-weight:700;color:var(--blue);list-style:none}
+.tldr>summary::-webkit-details-marker{display:none}
+.tldr>summary::before{content:"\\25B6";color:var(--gold);font-size:.7em;margin-right:.5rem}
+.tldr[open]>summary::before{content:"\\25BC"}
+.tldr-body{margin-top:.75rem}
+.tldr-body p{margin:.5rem 0;font-size:.95rem}
+.tldr-body ul{margin:.4rem 0;padding-left:1.2rem}
+.tldr-body li{margin:.3rem 0;font-size:.95rem}
+
 .list{display:flex;flex-direction:column;gap:1.25rem;margin-top:2rem}
 .row{display:flex;gap:1.5rem;border:1px solid var(--line);border-radius:8px;background:#fff;
   padding:1.1rem;align-items:flex-start}
@@ -279,6 +331,7 @@ main.wrap{padding:2.5rem 0 3.5rem}
   color:var(--gold);font-weight:700}
 .topics{margin:0;padding-left:1.1rem;font-size:.92rem}
 .topics li{margin:.15rem 0}
+.topics .ts{color:var(--muted);font-family:var(--mono);font-size:.82em;white-space:nowrap}
 ul.topics.placeholder{list-style:none;padding:.6rem .9rem;border:1px dashed var(--line);
   border-radius:6px;background:var(--panel);color:var(--muted);font-style:italic}
 

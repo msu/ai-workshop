@@ -24,6 +24,17 @@ main.wrap{padding:2.5rem 0 3.5rem}
 .hero h1{font-size:2.1rem;margin:0 0 .5rem;color:var(--blue)}
 .lede{color:var(--muted);font-size:1.05rem;max-width:60ch}
 
+.tldr{margin-top:1.75rem;border:1px solid var(--line);border-left:4px solid var(--gold);
+  border-radius:8px;background:var(--panel);padding:.75rem 1.1rem}
+.tldr>summary{cursor:pointer;font-weight:700;color:var(--blue);list-style:none}
+.tldr>summary::-webkit-details-marker{display:none}
+.tldr>summary::before{content:"\25B6";color:var(--gold);font-size:.7em;margin-right:.5rem}
+.tldr[open]>summary::before{content:"\25BC"}
+.tldr-body{margin-top:.75rem}
+.tldr-body p{margin:.5rem 0;font-size:.95rem}
+.tldr-body ul{margin:.4rem 0;padding-left:1.2rem}
+.tldr-body li{margin:.3rem 0;font-size:.95rem}
+
 .list{display:flex;flex-direction:column;gap:1.25rem;margin-top:2rem}
 .row{display:flex;gap:1.5rem;border:1px solid var(--line);border-radius:8px;background:#fff;
   padding:1.1rem;align-items:flex-start}
@@ -42,6 +53,7 @@ main.wrap{padding:2.5rem 0 3.5rem}
   color:var(--gold);font-weight:700}
 .topics{margin:0;padding-left:1.1rem;font-size:.92rem}
 .topics li{margin:.15rem 0}
+.topics .ts{color:var(--muted);font-family:var(--mono);font-size:.82em;white-space:nowrap}
 ul.topics.placeholder{list-style:none;padding:.6rem .9rem;border:1px dashed var(--line);
   border-radius:6px;background:var(--panel);color:var(--muted);font-style:italic}
 
